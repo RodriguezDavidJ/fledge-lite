@@ -1,0 +1,16 @@
+[
+  {"method": "POST", "path": "/fledge/service",
+   "body": {"name": "Pump 01", "type": "south", "plugin": "simpump", "enabled": true,
+            "config": {"assetName": {"value": "pump01"}, "speed": {"value": "85"}}}},
+  {"method": "POST", "path": "/fledge/service",
+   "body": {"name": "Pump trip replay", "type": "south", "plugin": "csvplayback", "enabled": true,
+            "config": {"assetName": {"value": "pump02_replay"}, "url": {"value": "samples/pump_trip.csv"}}}},
+  {"sleep": 0.5},
+  {"method": "PUT", "path": "/fledge/category/Pump 01Advanced", "body": {"readingsPerSec": "2"}},
+  {"method": "PUT", "path": "/fledge/category/Pump trip replayAdvanced", "body": {"readingsPerSec": "4"}},
+  {"method": "POST", "path": "/fledge/filter",
+   "body": {"name": "Hydraulic power", "plugin": "expression",
+            "filter_config": {"enable": "true", "name": "power_kw", "expression": "round(flow * pressure / 36, 2)"}}},
+  {"method": "PUT", "path": "/fledge/filter/Pump 01/pipeline?allow_duplicates=true&append_filter=true",
+   "body": {"pipeline": ["Hydraulic power"]}}
+]
